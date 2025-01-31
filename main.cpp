@@ -13,7 +13,6 @@ private:
     int fd_day, fd_mon, fd_year; // First Dose Date
     int sd_day, sd_mon, sd_year; // Second Dose Date
 
-
 public:
     void registration();
     void showData();
@@ -27,14 +26,15 @@ int Patient::random_num()
 {
     srand(time(0));
     int random = rand();
-
     cout << "ID number = " << random << endl;
     return random;
 }
+
 int Patient::getId()
 {
     return id;
 }
+
 int Patient::getPass()
 {
     return pass;
@@ -68,14 +68,12 @@ void Patient::registration()
     }
 
     cout << "Enter Patient Age: ";
-    while(!(cin>>age) || age<=0)
+    while (!(cin >> age) || age <= 0)
     {
-        cout<<"please enter a valid number for age: ";
+        cout << "Please enter a valid number for age: ";
         cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(),'\n');
-
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
-
 
     if (age < 18 || age > 120)
     {
@@ -94,7 +92,6 @@ void Patient::registration()
     cout << "First Dose Date: " << fd_day << "/" << fd_mon << "/" << fd_year << endl;
     cout << "Second Dose Date: " << sd_day << "/" << sd_mon << "/" << sd_year << endl;
 }
-
 
 void Patient::calculateDoseDates()
 {
@@ -129,37 +126,54 @@ void Patient::showData()
 
 void addPatient()
 {
-    Patient pt;
-    ofstream outfile("patients.data", ios::binary);
+    Patient *pt = (Patient *)malloc(sizeof(Patient)); // Dynamic memory allocation
 
-    pt.registration();
-    outfile.write(reinterpret_cast<char*>(&pt), sizeof(Patient));
+    if (pt == nullptr)
+    {
+        cout << "Memory allocation failed!\n";
+        return;
+    }
+
+    ofstream outfile("patients.data", ios::binary | ios::app); // Use `ios::app` to append data
+
+    pt->registration();
+    outfile.write(reinterpret_cast<char *>(pt), sizeof(Patient));
     outfile.close();
 
     cout << "Patient record created successfully!\n";
+
+    free(pt); // Free allocated memory
 }
 
 void searchPatient()
 {
-    int  idnum, searchPass;
+    int idnum;
     cout << "Enter Patient ID: ";
-    cin >> idnum ;
+    cin >> idnum;
 
-    Patient pt;
+    Patient *pt = (Patient *)malloc(sizeof(Patient)); // Dynamic memory allocation
+
+    if (pt == nullptr)
+    {
+        cout << "Memory allocation failed!\n";
+        return;
+    }
+
     ifstream infile("patients.data", ios::binary);
     bool found = false;
 
-    while (infile.read(reinterpret_cast<char*>(&pt), sizeof(Patient)))
+    while (infile.read(reinterpret_cast<char *>(pt), sizeof(Patient)))
     {
-        if (pt.getId() == idnum)
+        if (pt->getId() == idnum)
         {
-            pt.showData();
+            pt->showData();
             found = true;
             break;
         }
     }
 
     infile.close();
+    free(pt); // Free allocated memory
 
     if (!found)
     {
@@ -176,22 +190,30 @@ void loginPatient()
     cout << "Enter Patient Password: ";
     cin >> loginPass;
 
-    Patient pt;
+    Patient *pt = (Patient *)malloc(sizeof(Patient)); // Dynamic memory allocation
+
+    if (pt == nullptr)
+    {
+        cout << "Memory allocation failed!\n";
+        return;
+    }
+
     ifstream infile("patients.data", ios::binary);
     bool found = false;
 
-    while (infile.read(reinterpret_cast<char*>(&pt), sizeof(Patient)))
+    while (infile.read(reinterpret_cast<char *>(pt), sizeof(Patient)))
     {
-        if (pt.getId() == loginId && pt.getPass() == loginPass)
+        if (pt->getId() == loginId && pt->getPass() == loginPass)
         {
             cout << "\nLogin Successful!\n";
-            pt.showData();
+            pt->showData();
             found = true;
             break;
         }
     }
 
     infile.close();
+    free(pt); // Free allocated memory
 
     if (!found)
     {
@@ -207,28 +229,36 @@ void deletePatient()
     cout << "Enter Patient Password: ";
     cin >> deletePass;
 
-    Patient pt;
+    Patient *pt = (Patient *)malloc(sizeof(Patient)); // Dynamic memory allocation
+
+    if (pt == nullptr)
+    {
+        cout << "Memory allocation failed!\n";
+        return;
+    }
+
     ifstream infile("patients.data", ios::binary);
     ofstream outfile("temp.data", ios::binary);
     bool found = false;
 
-    while (infile.read(reinterpret_cast<char*>(&pt), sizeof(Patient)))
+    while (infile.read(reinterpret_cast<char *>(pt), sizeof(Patient)))
     {
-        if (pt.getId() == deleteId && pt.getPass() == deletePass)
+        if (pt->getId() == deleteId && pt->getPass() == deletePass)
         {
             found = true;
         }
         else
         {
-            outfile.write(reinterpret_cast<char*>(&pt), sizeof(Patient));
+            outfile.write(reinterpret_cast<char *>(pt), sizeof(Patient));
         }
     }
 
     infile.close();
     outfile.close();
+    free(pt); // Free allocated memory
 
     remove("patients.data");
-    rename("temp.dat", "patients.data");
+    rename("temp.data", "patients.data");
 
     if (found)
     {
