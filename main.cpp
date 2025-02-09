@@ -128,7 +128,7 @@ void addPatient()
 {
     Patient *pt = (Patient *)malloc(sizeof(Patient)); // Dynamic memory allocation
 
-    if (pt == nullptr)
+    if (pt == NULL)
     {
         cout << "Memory allocation failed!\n";
         return;
@@ -153,7 +153,7 @@ void searchPatient()
 
     Patient *pt = (Patient *)malloc(sizeof(Patient)); // Dynamic memory allocation
 
-    if (pt == nullptr)
+    if (pt == NULL)
     {
         cout << "Memory allocation failed!\n";
         return;
@@ -192,7 +192,7 @@ void loginPatient()
 
     Patient *pt = (Patient *)malloc(sizeof(Patient)); // Dynamic memory allocation
 
-    if (pt == nullptr)
+    if (pt == NULL)
     {
         cout << "Memory allocation failed!\n";
         return;
@@ -231,7 +231,7 @@ void deletePatient()
 
     Patient *pt = (Patient *)malloc(sizeof(Patient)); // Dynamic memory allocation
 
-    if (pt == nullptr)
+    if (pt == NULL)
     {
         cout << "Memory allocation failed!\n";
         return;
